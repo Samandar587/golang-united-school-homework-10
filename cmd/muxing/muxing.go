@@ -20,7 +20,7 @@ main function reads host/port from env just for an example, flavor it following 
 
 func getMessageParam(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r) // Gets param
-	_, err := fmt.Fprintf(w, "Hello, %s", param["PARAM"])
+	_, err := fmt.Fprintf(w, "Hello, %s!", param["PARAM"])
 	if err != nil {
 		log.Println(err)
 	}
