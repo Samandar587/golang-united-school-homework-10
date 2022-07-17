@@ -56,7 +56,7 @@ func postHeaders(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	out := a + b
-	res := string(out)
+	res := strconv.Itoa(out)
 	w.Header().Add("a+b", res)
 
 }
