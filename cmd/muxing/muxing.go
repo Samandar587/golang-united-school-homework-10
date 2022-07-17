@@ -61,19 +61,13 @@ func postHeaders(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func handleFunctions() {
-	r := mux.NewRouter()
-
-	r.HandleFunc("/name/{PARAM}", getMessageParam).Methods(http.MethodGet)
-	r.HandleFunc("/bad", getBadStatus).Methods(http.MethodGet)
-	r.HandleFunc("/data", postDataWithParam).Methods(http.MethodPost)
-	r.HandleFunc("/headers", postHeaders).Methods(http.MethodPost)
-}
-
 // Start /** Starts the web server listener on given host and port.
 func Start(host string, port int) {
 	router := mux.NewRouter()
-	handleFunctions()
+	router.HandleFunc("/name/{PARAM}", getMessageParam).Methods(http.MethodGet)
+	router.HandleFunc("/bad", getBadStatus).Methods(http.MethodGet)
+	router.HandleFunc("/data", postDataWithParam).Methods(http.MethodPost)
+	router.HandleFunc("/headers", postHeaders).Methods(http.MethodPost)
 
 	log.Println(fmt.Printf("Starting API server on %s:%d\n", host, port))
 	if err := http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), router); err != nil {
