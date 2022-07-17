@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -19,7 +20,7 @@ main function reads host/port from env just for an example, flavor it following 
 
 func getMessageParam(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r) // Gets param
-	_, err := fmt.Fprintf(w, "Hello, %v", param)
+	_, err := fmt.Fprintf(w, "Hello, %s", param)
 	if err != nil {
 		log.Println(err)
 	}
@@ -27,12 +28,16 @@ func getMessageParam(w http.ResponseWriter, r *http.Request) {
 
 func getBadStatus(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusInternalServerError)
+
 }
 
 func postDataWithParam(w http.ResponseWriter, r *http.Request) {
 	//param := mux.Vars(r)
-	param := r.GetBody
-	_, err := fmt.Fprintf(w, "I got message:\n%v", param)
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Fprintln(w, err)
+	}
+	_, err = fmt.Fprintf(w, "I got message:\n%s", string(body))
 	if err != nil {
 		log.Println(err)
 	}
