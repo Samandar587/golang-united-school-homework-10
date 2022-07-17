@@ -17,9 +17,58 @@ Feel free to drop gorilla.mux if you want and use any other solution available.
 main function reads host/port from env just for an example, flavor it following your taste
 */
 
+func getMessageParam(w http.ResponseWriter, r *http.Request) {
+	param := mux.Vars(r) // Gets param
+	_, err := fmt.Fprintf(w, "Hello, %v", param)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func getBadStatus(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusInternalServerError)
+}
+
+func postDataWithParam(w http.ResponseWriter, r *http.Request) {
+	//param := mux.Vars(r)
+	param := r.GetBody
+	_, err := fmt.Fprintf(w, "I got message:\n%v", param)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func postHeaders(w http.ResponseWriter, r *http.Request) {
+
+	num1 := r.Header.Get("a")
+	num2 := r.Header.Get("b")
+	a, err := strconv.Atoi(num1)
+	if err != nil {
+		panic(err)
+	}
+	b, err := strconv.Atoi(num2)
+	if err != nil {
+		panic(err)
+	}
+	out := a + b
+	res := string(out)
+	w.Header().Add("a+b", res)
+
+}
+
+func handleFunctions() {
+	r := mux.NewRouter()
+
+	r.HandleFunc("/name/{PARAM}", getMessageParam).Methods(http.MethodGet)
+	r.HandleFunc("/bad", getBadStatus).Methods(http.MethodGet)
+	r.HandleFunc("/data", postDataWithParam).Methods(http.MethodPost)
+	r.HandleFunc("/headers", postHeaders).Methods(http.MethodPost)
+}
+
 // Start /** Starts the web server listener on given host and port.
 func Start(host string, port int) {
 	router := mux.NewRouter()
+	handleFunctions()
 
 	log.Println(fmt.Printf("Starting API server on %s:%d\n", host, port))
 	if err := http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), router); err != nil {
